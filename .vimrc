@@ -24,6 +24,7 @@ Plugin 'marijnh/tern_for_vim'
 Plugin 'bling/vim-airline'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'airblade/vim-gitgutter'
+Plugin 'altercation/vim-colors-solarized'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -61,8 +62,9 @@ set nowrap                      " Don't wrap long lines Don't
 " -----------------------------------------------------
 syntax on
 syntax sync minlines=256
+set background=dark
 set t_Co=256
-colorscheme distinguished
+colorscheme solarized
 set nospell                     " Spell checking on
 
 " -----------------------------------------------------
@@ -139,6 +141,7 @@ set nojoinspaces                                        " Don't add more spaces 
 " -----------------------------------------------------
 let mapleader = ' '  " Set space to <Leader>"
 imap jk <Esc>
+vmap jk <Esc>
 
 noremap j gj
 noremap k gk
@@ -212,18 +215,18 @@ if isdirectory(expand("~/.vim/bundle/ctrlp.vim/"))
 endif
 
 if isdirectory(expand("~/.vim/bundle/vim-fugitive/"))
-    nnoremap <silent> <leader>gs :Gstatus<CR>
-    nnoremap <silent> <leader>gd :Gdiff<CR>
-    nnoremap <silent> <leader>gc :Gcommit<CR>
-    nnoremap <silent> <leader>gb :Gblame<CR>
-    nnoremap <silent> <leader>gl :Glog<CR>
-    nnoremap <silent> <leader>gp :Git push<CR>
-    nnoremap <silent> <leader>gr :Gread<CR>
-    nnoremap <silent> <leader>gw :Gwrite<CR>
-    nnoremap <silent> <leader>ge :Gedit<CR>
-    " Mnemonic _i_nteractive
-    nnoremap <silent> <leader>gi :Git add -p %<CR>
-    nnoremap <silent> <leader>gg :SignifyToggle<CR>
+  nnoremap <silent> <leader>gs :Gstatus<CR>
+  nnoremap <silent> <leader>gd :Gdiff<CR>
+  nnoremap <silent> <leader>gc :Gcommit<CR>
+  nnoremap <silent> <leader>gb :Gblame<CR>
+  nnoremap <silent> <leader>gl :Glog<CR>
+  nnoremap <silent> <leader>gp :Git push<CR>
+  nnoremap <silent> <leader>gr :Gread<CR>
+  nnoremap <silent> <leader>gw :Gwrite<CR>
+  nnoremap <silent> <leader>ge :Gedit<CR>
+  " Mnemonic _i_nteractive
+  nnoremap <silent> <leader>gi :Git add -p %<CR>
+  nnoremap <silent> <leader>gg :SignifyToggle<CR>
 endif
 
 " Start ieteractive EasyAlign in visual mode (e.g. vip<Enter>)
@@ -234,4 +237,7 @@ nmap <Leader>a <Plug>(EasyAlign)
 
 " EasyMotion
 nmap <Leader>s <Plug>(easymotion-s)
-
+"
+" change the default EasyMotion shading to something more readable with Solarized
+hi link EasyMotionTarget ErrorMsg
+hi link EasyMotionShade  Comment
