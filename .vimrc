@@ -46,6 +46,7 @@ set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
+set guifont=Inconsolata\ for\ Powerline:h18
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -114,7 +115,7 @@ set foldenable                  " Auto fold code
 " -----------------------------------------------------
 " Mapping
 " -----------------------------------------------------
-set timeoutlen=400
+set timeoutlen=50
 
 " -----------------------------------------------------
 " Command line editing
@@ -241,3 +242,13 @@ nmap <Leader>s <Plug>(easymotion-s)
 " change the default EasyMotion shading to something more readable with Solarized
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
+
+" Settings for gitgutter to look right with solarized theme
+highlight clear SignColumn
+highlight GitGutterAdd ctermfg=2* guifg=darkgreen " Had to use the 2* to get it to turn green
+highlight GitGutterChange ctermfg=yellow guifg=darkyellow
+highlight GitGutterDelete ctermfg=red guifg=darkred
+highlight GitGutterChangeDelete ctermfg=yellow guifg=darkyellow
+
+" Airline
+let g:airline_powerline_fonts=1
