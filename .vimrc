@@ -29,6 +29,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'fatih/vim-go'
 Plugin 'othree/javascript-libraries-syntax.vim'
+Plugin 'terryma/vim-expand-region'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -241,6 +242,9 @@ highlight GitGutterChangeDelete ctermfg=yellow guifg=darkyellow
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled=1
 
+" Expand region
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
