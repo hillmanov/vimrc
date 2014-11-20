@@ -17,7 +17,6 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'pangloss/vim-javascript'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'Lokaltog/vim-distinguished'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'Raimondi/delimitMate'
 Plugin 'marijnh/tern_for_vim'
@@ -32,6 +31,8 @@ Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'terryma/vim-expand-region'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'tpope/vim-commentary'
+Plugin 'groenewege/vim-less'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -126,6 +127,11 @@ set foldenable                  " Auto fold code
 set timeoutlen=250
 
 " -----------------------------------------------------
+" The swap file
+" -----------------------------------------------------
+set noswapfile " Turn off swp file creation
+
+" -----------------------------------------------------
 " Command line editing
 " -----------------------------------------------------
 set history=1000                " Store a ton of history (default is 20)
@@ -154,15 +160,14 @@ vmap jk <Esc>
 
 noremap j gj
 noremap k gk
+noremap Y y$
 
 vnoremap < <gv
 vnoremap > >gv
 
-" Keep the cursor in the same position after exiting insert mode
-let CursorColumnI = 0 "the cursor column position in INSERT
-autocmd InsertEnter  let CursorColumnI = col('.')
-autocmd CursorMovedI  let CursorColumnI = col('.')
-autocmd InsertLeave  if col('.') != CursorColumnI | call cursor(0, col('.')+1) | endif
+noremap <tab> :bn<CR>
+noremap <S-tab> :bp<CR>
+
 
 " Adjust viewports to the same size
 map <Leader>= <C-w>=
@@ -170,6 +175,8 @@ map <Leader>= <C-w>=
 cmap w!! w !sudo tee > /dev/null %
 
 nnoremap <leader>w :w<cr>
+
+nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
 " vimrc edit and source
 nnoremap <leader>ev :tabe $MYVIMRC<cr>
@@ -247,6 +254,10 @@ let g:airline#extensions#tabline#enabled=1
 " Expand region
 vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
+
+" Javascript library syntax highlighting settings
+let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
+
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
@@ -262,3 +273,4 @@ function! StripTrailingWhitespace()
   let @/=_s
   call cursor(l, c)
 endfunction
+
