@@ -34,7 +34,7 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'tpope/vim-commentary'
 Plugin 'groenewege/vim-less'
-
+Plugin 'mhinz/vim-startify'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
