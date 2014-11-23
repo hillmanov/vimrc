@@ -16,6 +16,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'kien/ctrlp.vim'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'pangloss/vim-javascript'
+Plugin 'ervandew/supertab'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'Raimondi/delimitMate'
@@ -234,7 +235,7 @@ vmap <Enter> <Plug>(EasyAlign)
 nmap <Leader>a <Plug>(EasyAlign)
 
 " EasyMotion
-nmap <Leader>s <Plug>(easymotion-s)
+nmap <Leader><Leader>s <Plug>(easymotion-s)
 
 " change the default EasyMotion shading to something more readable with Solarized
 hi link EasyMotionTarget ErrorMsg
@@ -258,6 +259,15 @@ vmap <C-v> <Plug>(expand_region_shrink)
 " Javascript library syntax highlighting settings
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
 
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-j>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
