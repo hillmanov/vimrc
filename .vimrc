@@ -35,6 +35,7 @@ Plugin 'honza/vim-snippets'
 Plugin 'tpope/vim-commentary'
 Plugin 'groenewege/vim-less'
 Plugin 'mhinz/vim-startify'
+
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -268,6 +269,8 @@ let g:SuperTabDefaultCompletionType = '<C-j>'
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+let g:go_fmt_command = "goimports"
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
