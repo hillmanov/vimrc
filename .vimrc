@@ -170,6 +170,18 @@ vnoremap > >gv
 noremap <tab> :bn<CR>
 noremap <S-tab> :bp<CR>
 
+" Replace current word with what is in the clipboard
+nnoremap S "_diwP
+
+" Move lines around with Alt j and k in any mode
+nnoremap ∆ :m .+1<CR>==
+nnoremap ˚ :m .-2<CR>==
+
+inoremap ∆ <Esc>:m .+1<CR>==gi
+inoremap ˚ <Esc>:m .-2<CR>==gi
+
+vnoremap ∆ :m '>+1<CR>gv=gv
+vnoremap ˚ :m '<-2<CR>gv=gv
 
 " Adjust viewports to the same size
 map <Leader>= <C-w>=
@@ -270,6 +282,7 @@ let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
+" Use goimports
 let g:go_fmt_command = "goimports"
 " -----------------------------------------------------
 " Helper functions
