@@ -191,6 +191,7 @@ cmap w!! w !sudo tee > /dev/null %
 nnoremap <leader>w :w<cr>
 
 nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+vnoremap <Leader>h "hy:%s/<C-r>h//gc<left><left><left>
 
 " vimrc edit and source
 nnoremap <leader>ev :tabe $MYVIMRC<cr>
