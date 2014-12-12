@@ -284,6 +284,7 @@ let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
 " Use goimports
+let g:go_fmt_command = "goimports"
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
