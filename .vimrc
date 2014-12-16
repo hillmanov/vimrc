@@ -162,13 +162,20 @@ vmap jk <Esc>
 
 noremap j gj
 noremap k gk
+" Make Y act like D and C
 noremap Y y$
+
+" Go to the end of what was just pasted. 
+vnoremap <silent> y y`]
+vnoremap <silent> p p`]
+nnoremap <silent> p p`]
 
 vnoremap < <gv
 vnoremap > >gv
 
 noremap <tab> :bn<CR>
 noremap <S-tab> :bp<CR>
+noremap <Leader>x :bd<CR>
 
 " Replace current word with what is in the clipboard
 nnoremap S "_diwP
