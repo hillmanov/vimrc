@@ -35,6 +35,8 @@ Plugin 'honza/vim-snippets'
 Plugin 'tpope/vim-commentary'
 Plugin 'groenewege/vim-less'
 Plugin 'mhinz/vim-startify'
+Plugin 'gregsexton/MatchTag'
+Plugin 'tmhedberg/matchit'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
