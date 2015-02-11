@@ -24,8 +24,8 @@ Plugin 'marijnh/tern_for_vim'
 Plugin 'bling/vim-airline'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'airblade/vim-gitgutter'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'scrooloose/nerdtree'
+Plugin 'morhetz/gruvbox'
+Plugin 'tpope/vim-vinegar'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'fatih/vim-go'
 Plugin 'othree/javascript-libraries-syntax.vim'
@@ -34,9 +34,14 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'tpope/vim-commentary'
 Plugin 'groenewege/vim-less'
-Plugin 'mhinz/vim-startify'
 Plugin 'gregsexton/MatchTag'
 Plugin 'tmhedberg/matchit'
+Plugin 'mattn/emmet-vim'
+Plugin 'rking/ag.vim'
+Plugin 'dbakker/vim-projectroot'
+Plugin 'tpope/vim-abolish'
+Plugin 'sjl/gundo.vim'
+Plugin 'kshenoy/vim-signature'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -66,8 +71,8 @@ set relativenumber              " Relative line numbers
 
 set scrolljump=1                " Lines to scroll when cursor leaves screen
 set scrolloff=8                 " Minimum lines to keep above and below cursor
-set list                        " Show white space characters
-set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+" set list                        " Show white space characters
+" set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 set nowrap                      " Don't wrap long lines Don't
 
 " -----------------------------------------------------
@@ -76,9 +81,8 @@ set nowrap                      " Don't wrap long lines Don't
 syntax on
 syntax sync minlines=256
 set background=dark
-set t_Co=256
-let g:solarized_termcolors=256
-colorscheme solarized
+" set t_Co=256
+colorscheme gruvbox
 set nospell                     " Spell checking on
 
 " -----------------------------------------------------
@@ -103,7 +107,7 @@ set mousehide "Hide mouse while characters are being typed
 " Editing text
 " -----------------------------------------------------
 set showmatch                   " Show matching brackets/parenthesis
-autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> call StripTrailingWhitespace() 
+autocmd FileType java,go,javascript,python,html,less,css,json autocmd BufWritePre <buffer> call StripTrailingWhitespace() 
 " -----------------------------------------------------
 " Tabs and indenting
 " -----------------------------------------------------
@@ -154,16 +158,19 @@ set backup                                              " enable backups
 set backupdir=~/.vim/tmp/backup/
 set virtualedit=onemore                                 " Allow for cursor beyond last character
 set nojoinspaces                                        " Don't add more spaces with joing lines with <S-J>
-
+set shortmess=I                                         " Don't show the intro message on startup
 " -----------------------------------------------------
 " Key (re)mappings 
 " -----------------------------------------------------
-let mapleader = ' '  " Set space to <Leader>"
-imap jk <Esc>
-vmap jk <Esc>
+
+" Set space to <Leader>"
+let mapleader = ' '
+" imap jk <Esc>
+" vmap jk <Esc>
 
 noremap j gj
 noremap k gk
+
 " Make Y act like D and C
 noremap Y y$
 
@@ -174,6 +181,7 @@ nnoremap <silent> p p`]
 
 vnoremap < <gv
 vnoremap > >gv
+vnoremap = =gv
 
 noremap <tab> :bn<CR>
 noremap <S-tab> :bp<CR>
@@ -199,8 +207,17 @@ cmap w!! w !sudo tee > /dev/null %
 
 nnoremap <leader>w :w<cr>
 
+" Search and replace in the file
 nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 vnoremap <Leader>h "hy:%s/<C-r>h//gc<left><left><left>
+
+" Search and replace in the files in the quickfix list
+nnoremap <Leader>H :Qargs \| argdo %s/\<<C-r><C-w>\>//gc \| update<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+vnoremap <Leader>H "hy:Qargs \| argdo %s/<C-r>h//gc \| update<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
+" Find project wide
+nnoremap <Leader>ps :ProjectRootExe Ag<space><C-r><C-w><space>-Q<space>-w
+vnoremap <Leader>ps "hy:ProjectRootExe Ag<space><C-r>h<space>
 
 " vimrc edit and source
 nnoremap <leader>ev :tabe $MYVIMRC<cr>
@@ -208,34 +225,26 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 
 let g:indent_guides_enable_on_vim_startup = 0
 
-nmap <leader>jf <Esc>:%!python -m json.tool<CR><Esc>:set filetype=json<CR>
+" Quick fix file navigation
+nmap <silent> <RIGHT> :cnext<CR>
+nmap <silent> <LEFT> :cprev<CR>
 
 " -----------------------------------------------------
 " PLugin settings
 " -----------------------------------------------------
-" NERFTree customizations
-map <C-n> :NERDTreeToggle<CR>
-nmap <leader>nt :NERDTreeFind<CR>
-
-let NERDTreeShowBookmarks=1
-let NERDTreeIgnore=['\~$', '\.swp$', '^\.git$']
-let NERDTreeChDirMode=0
-let NERDTreeQuitOnOpen=1
-let NERDTreeMouseMode=2
-let NERDTreeShowHidden=1
-let NERDTreeKeepTreeInNewTab=1
-let g:nerdtree_tabs_open_on_gui_startup=0
 
 " CtrlP customizations
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_custom_ignore = { 'dir':  '\.git$' }
-let s:ctrlp_fallback = 'ack %s --nocolor -f'
+let s:ctrlp_fallback = 'ag %s --nocolor -f'
 let g:ctrlp_user_command = {
       \ 'types': {
       \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
       \ },
       \ 'fallback': s:ctrlp_fallback
       \ }
+let g:ctrlp_match_window_bottom   = 0
+let g:ctrlp_match_window_reversed = 0
 
 "Fugitive customizations
 nnoremap <silent> <leader>gs :Gstatus<CR>
@@ -310,3 +319,20 @@ function! StripTrailingWhitespace()
   call cursor(l, c)
 endfunction
 
+" -----------------------------------------------------
+" Qargs - used for populating the args list with the filenames in the quickfix
+" list
+command! -nargs=0 -bar Qargs execute 'args ' . QuickfixFilenames()
+function! QuickfixFilenames()
+  " Building a hash ensures we get each buffer only once
+  let buffer_numbers = {}
+  for quickfix_item in getqflist()
+    let buffer_numbers[quickfix_item['bufnr']] = bufname(quickfix_item['bufnr'])
+  endfor
+  return join(values(buffer_numbers))
+endfunction
+
+" -------------
+" Gundo
+nnoremap <F5> :GundoToggle<CR>
+let g:gundo_preview_bottom = 1
