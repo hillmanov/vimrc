@@ -25,7 +25,7 @@ Plugin 'bling/vim-airline'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'morhetz/gruvbox'
-Plugin 'tpope/vim-vinegar'
+Plugin 'scrooloose/nerdtree'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'fatih/vim-go'
 Plugin 'othree/javascript-libraries-syntax.vim'
@@ -81,7 +81,7 @@ set nowrap                      " Don't wrap long lines Don't
 syntax on
 syntax sync minlines=256
 set background=dark
-" set t_Co=256
+set t_Co=256
 colorscheme gruvbox
 set nospell                     " Spell checking on
 
@@ -232,6 +232,18 @@ nmap <silent> <LEFT> :cprev<CR>
 " -----------------------------------------------------
 " PLugin settings
 " -----------------------------------------------------
+" NERFTree customizations
+map <C-n> :NERDTreeToggle<CR>
+nmap <leader>nt :NERDTreeFind<CR>
+
+let NERDTreeShowBookmarks=1
+let NERDTreeIgnore=['\~$', '\.swp$', '^\.git$','^node_modules$', '^\.DS_Store$']
+let NERDTreeChDirMode=0
+let NERDTreeQuitOnOpen=1
+let NERDTreeMouseMode=2
+let NERDTreeShowHidden=1
+let NERDTreeKeepTreeInNewTab=1
+let g:nerdtree_tabs_open_on_gui_startup=0
 
 " CtrlP customizations
 let g:ctrlp_working_path_mode = 'ra'
