@@ -17,12 +17,12 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'pangloss/vim-javascript'
 Plugin 'ervandew/supertab'
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'Raimondi/delimitMate'
 Plugin 'marijnh/tern_for_vim'
 Plugin 'bling/vim-airline'
 Plugin 'Lokaltog/vim-easymotion'
+Plugin 'Shougo/neocomplete.vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'morhetz/gruvbox'
 Plugin 'scrooloose/nerdtree'
@@ -302,11 +302,6 @@ vmap <C-v> <Plug>(expand_region_shrink)
 
 " Javascript library syntax highlighting settings
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
-
-" make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-j>'
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<tab>"
