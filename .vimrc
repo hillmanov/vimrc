@@ -42,6 +42,9 @@ Plugin 'dbakker/vim-projectroot'
 Plugin 'tpope/vim-abolish'
 Plugin 'sjl/gundo.vim'
 Plugin 'kshenoy/vim-signature'
+Plugin 'sjl/vitality.vim'
+Plugin 'joshhartigan/vim-reddit'
+Plugin 'junegunn/vim-peekaboo'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -165,8 +168,8 @@ set shortmess=I                                         " Don't show the intro m
 
 " Set space to <Leader>"
 let mapleader = ' '
-" imap jk <Esc>
-" vmap jk <Esc>
+imap jk <Esc>
+vmap jk <Esc>
 
 noremap j gj
 noremap k gk
@@ -191,14 +194,14 @@ noremap <Leader>x :bd<CR>
 nnoremap S "_diwP
 
 " Move lines around with Alt j and k in any mode
-nnoremap ∆ :m .+1<CR>==
-nnoremap ˚ :m .-2<CR>==
+nnoremap <Down> :m .+1<CR>==
+nnoremap <Up> :m .-2<CR>==
 
-inoremap ∆ <Esc>:m .+1<CR>==gi
-inoremap ˚ <Esc>:m .-2<CR>==gi
+inoremap <Down> <Esc>:m .+1<CR>==gi
+inoremap <Up> <Esc>:m .-2<CR>==gi
 
-vnoremap ∆ :m '>+1<CR>gv=gv
-vnoremap ˚ :m '<-2<CR>gv=gv
+vnoremap <Down> :m '>+1<CR>gv=gv
+vnoremap <Up> :m '<-2<CR>gv=gv
 
 " Adjust viewports to the same size
 map <Leader>= <C-w>=
