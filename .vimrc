@@ -83,9 +83,9 @@ set nowrap                      " Don't wrap long lines Don't
 " -----------------------------------------------------
 syntax on
 syntax sync minlines=256
+colorscheme gruvbox
 set background=dark
 set t_Co=256
-colorscheme gruvbox
 set nospell                     " Spell checking on
 
 " -----------------------------------------------------
