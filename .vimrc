@@ -45,6 +45,8 @@ Plugin 'kshenoy/vim-signature'
 Plugin 'sjl/vitality.vim'
 Plugin 'joshhartigan/vim-reddit'
 Plugin 'junegunn/vim-peekaboo'
+Plugin 'rhysd/clever-f.vim'
+Plugin 'godlygeek/csapprox'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -66,7 +68,7 @@ set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=Inconsolata\ for\ Powerline:h16
+set guifont=Inconsolata\ for\ Powerline:h14
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -85,7 +87,6 @@ syntax on
 syntax sync minlines=256
 colorscheme gruvbox
 set background=dark
-set t_Co=256
 set nospell                     " Spell checking on
 
 " -----------------------------------------------------
@@ -189,9 +190,10 @@ vnoremap = =gv
 noremap <tab> :bn<CR>
 noremap <S-tab> :bp<CR>
 noremap <Leader>x :bd<CR>
+noremap <Leader>X :BufOnly<CR>
 
 " Replace current word with what is in the clipboard
-nnoremap S "_diwP
+nnoremap <Leader>s "_diwP
 
 " Move lines around with Alt j and k in any mode
 nnoremap <Down> :m .+1<CR>==
@@ -287,6 +289,11 @@ nmap <Leader><Leader>s <Plug>(easymotion-s)
 " change the default EasyMotion shading to something more readable with Solarized
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
+
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
 
 " Settings for gitgutter to look right with solarized theme
 highlight clear SignColumn
@@ -387,7 +394,7 @@ function! s:my_cr_function()
   "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
 endfunction
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><TAB>  pumvisible() ? "<C-n>" : "\<TAB>"
 
 inoremap <expr><C-j> pumvisible() ? '<C-n>' : 'j'
 inoremap <expr><C-k> pumvisible() ? '<C-p>' : 'k'
@@ -417,3 +424,70 @@ endif
 " For perlomni.vim setting.
 " https://github.com/c9s/perlomni.vim
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+
+" BufOnly.vim  -  Delete all the buffers except the current/named buffer.
+"
+" Copyright November 2003 by Christian J. Robinson <infynity@onewest.net>
+"
+" Distributed under the terms of the Vim license.  See ":help license".
+"
+" Usage:
+"
+" :Bonly / :BOnly / :Bufonly / :BufOnly [buffer] 
+"
+" Without any arguments the current buffer is kept.  With an argument the
+" buffer name/number supplied is kept.
+
+command! -nargs=? -complete=buffer -bang Bonly :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang BOnly :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang Bufonly :call BufOnly('<args>', '<bang>')
+command! -nargs=? -complete=buffer -bang BufOnly :call BufOnly('<args>', '<bang>')
+
+function! BufOnly(buffer, bang)
+	if a:buffer == ''
+		" No buffer provided, use the current buffer.
+		let buffer = bufnr('%')
+	elseif (a:buffer + 0) > 0
+		" A buffer number was provided.
+		let buffer = bufnr(a:buffer + 0)
+	else
+		" A buffer name was provided.
+		let buffer = bufnr(a:buffer)
+	endif
+
+	if buffer == -1
+		echohl ErrorMsg
+		echomsg "No matching buffer for" a:buffer
+		echohl None
+		return
+	endif
+
+	let last_buffer = bufnr('$')
+
+	let delete_count = 0
+	let n = 1
+	while n <= last_buffer
+		if n != buffer && buflisted(n)
+			if a:bang == '' && getbufvar(n, '&modified')
+				echohl ErrorMsg
+				echomsg 'No write since last change for buffer'
+							\ n '(add ! to override)'
+				echohl None
+			else
+				silent exe 'bdel' . a:bang . ' ' . n
+				if ! buflisted(n)
+					let delete_count = delete_count+1
+				endif
+			endif
+		endif
+		let n = n+1
+	endwhile
+
+	if delete_count == 1
+		echomsg delete_count "buffer deleted"
+	elseif delete_count > 1
+		echomsg delete_count "buffers deleted"
+	endif
+
+endfunction
