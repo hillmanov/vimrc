@@ -7,49 +7,39 @@ filetype off                  " required for Vundle
 " -----------------------------------------------------
 " Plugins
 " -----------------------------------------------------
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim/plugged')
 
-Plugin 'gmarik/Vundle.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'kien/ctrlp.vim'
-Plugin 'junegunn/vim-easy-align'
-Plugin 'pangloss/vim-javascript'
-Plugin 'ervandew/supertab'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'Raimondi/delimitMate'
-Plugin 'marijnh/tern_for_vim'
-Plugin 'bling/vim-airline'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'Shougo/neocomplete.vim'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'morhetz/gruvbox'
-Plugin 'scrooloose/nerdtree'
-Plugin 'digitaltoad/vim-jade'
-Plugin 'fatih/vim-go'
-Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'terryma/vim-expand-region'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'tpope/vim-commentary'
-Plugin 'groenewege/vim-less'
-Plugin 'gregsexton/MatchTag'
-Plugin 'tmhedberg/matchit'
-Plugin 'mattn/emmet-vim'
-Plugin 'rking/ag.vim'
-Plugin 'dbakker/vim-projectroot'
-Plugin 'tpope/vim-abolish'
-Plugin 'sjl/gundo.vim'
-Plugin 'kshenoy/vim-signature'
-Plugin 'sjl/vitality.vim'
-Plugin 'joshhartigan/vim-reddit'
-Plugin 'junegunn/vim-peekaboo'
-Plugin 'rhysd/clever-f.vim'
-Plugin 'godlygeek/csapprox'
+Plug 'gmarik/Vundle.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'kien/ctrlp.vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'pangloss/vim-javascript'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'Raimondi/delimitMate'
+Plug 'marijnh/tern_for_vim'
+Plug 'bling/vim-airline'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'Shougo/neocomplete.vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'morhetz/gruvbox'
+Plug 'scrooloose/nerdtree'
+Plug 'digitaltoad/vim-jade'
+Plug 'fatih/vim-go'
+Plug 'othree/javascript-libraries-syntax.vim'
+Plug 'tpope/vim-commentary'
+Plug 'groenewege/vim-less'
+Plug 'gregsexton/MatchTag'
+Plug 'tmhedberg/matchit'
+Plug 'rking/ag.vim'
+Plug 'dbakker/vim-projectroot'
+Plug 'tpope/vim-abolish'
+Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
+Plug 'sjl/vitality.vim' " Adds a nicer cursor when in insert mode
+Plug 'junegunn/vim-peekaboo'
+Plug 'rhysd/clever-f.vim'
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()            " required
 
 " -----------------------------------------------------
 " Moving around, searching and patterns
