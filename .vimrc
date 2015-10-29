@@ -9,18 +9,16 @@ filetype off                  " required for Vundle
 " -----------------------------------------------------
 call plug#begin('~/.vim/plugged')
 
-Plug 'gmarik/Vundle.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'kien/ctrlp.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'pangloss/vim-javascript'
-Plug 'jelera/vim-javascript-syntax'
+Plug 'othree/yajs.vim'
 Plug 'Raimondi/delimitMate'
 Plug 'marijnh/tern_for_vim'
 Plug 'bling/vim-airline'
 Plug 'Lokaltog/vim-easymotion'
-Plug 'Shougo/neocomplete.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'morhetz/gruvbox'
 Plug 'scrooloose/nerdtree'
@@ -37,7 +35,14 @@ Plug 'tpope/vim-abolish'
 Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
 Plug 'sjl/vitality.vim' " Adds a nicer cursor when in insert mode
 Plug 'junegunn/vim-peekaboo'
-Plug 'rhysd/clever-f.vim'
+Plug 'tpope/vim-repeat'
+Plug 'wellle/targets.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'terryma/vim-expand-region'
+Plug 'scrooloose/syntastic'
+Plug 'mxw/vim-jsx'
+Plug 'othree/html5.vim'
+" Plug 'terryma/vim-multiple-cursors'
 
 call plug#end()            " required
 
@@ -58,7 +63,7 @@ set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=Inconsolata\ for\ Powerline:h14
+set guifont=Meslo\ LG\ M\ for\ Powerline:h14
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -195,12 +200,19 @@ inoremap <Up> <Esc>:m .-2<CR>==gi
 vnoremap <Down> :m '>+1<CR>gv=gv
 vnoremap <Up> :m '<-2<CR>gv=gv
 
+" Formated pasted text automatically
+nnoremap p ]p
+
+" Select pasted text
+nnoremap gp `[v`]
+
 " Adjust viewports to the same size
 map <Leader>= <C-w>=
 
 cmap w!! w !sudo tee > /dev/null %
 
-nnoremap <leader>w :w<cr>
+nnoremap <Leader>w :w<cr>
+nnoremap <Leader><Leader>n :!node %<cr>
 
 " Search and replace in the file
 nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
@@ -211,12 +223,12 @@ nnoremap <Leader>H :Qargs \| argdo %s/\<<C-r><C-w>\>//gc \| update<Left><Left><L
 vnoremap <Leader>H "hy:Qargs \| argdo %s/<C-r>h//gc \| update<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
 " Find project wide
-nnoremap <Leader>ps :ProjectRootExe Ag<space><C-r><C-w><space>-Q<space>-w
-vnoremap <Leader>ps "hy:ProjectRootExe Ag<space><C-r>h<space>
+nnoremap <Leader><Leader>/ :ProjectRootExe Ag<space><C-r><C-w><space>-Q<space>-w
+vnoremap <Leader><Leader>/ "hy:ProjectRootExe Ag<space><C-r>h<space>
 
 " vimrc edit and source
-nnoremap <leader>ev :tabe $MYVIMRC<cr>
-nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <Leader>ev :tabe $MYVIMRC<cr>
+nnoremap <Leader>sv :source $MYVIMRC<cr>
 
 let g:indent_guides_enable_on_vim_startup = 0
 
@@ -224,6 +236,7 @@ let g:indent_guides_enable_on_vim_startup = 0
 nmap <silent> <RIGHT> :cnext<CR>
 nmap <silent> <LEFT> :cprev<CR>
 
+tnoremap jk <c-\><c-n>
 " -----------------------------------------------------
 " PLugin settings
 " -----------------------------------------------------
@@ -280,11 +293,6 @@ nmap <Leader><Leader>s <Plug>(easymotion-s)
 hi link EasyMotionTarget ErrorMsg
 hi link EasyMotionShade  Comment
 
-map  / <Plug>(easymotion-sn)
-omap / <Plug>(easymotion-tn)
-map  n <Plug>(easymotion-next)
-map  N <Plug>(easymotion-prev)
-
 " Settings for gitgutter to look right with solarized theme
 highlight clear SignColumn
 highlight GitGutterAdd ctermfg=2* guifg=darkgreen " Had to use the 2* to get it to turn green
@@ -338,82 +346,6 @@ function! QuickfixFilenames()
   endfor
   return join(values(buffer_numbers))
 endfunction
-
-" -------------
-" Gundo
-nnoremap <F5> :GundoToggle<CR>
-let g:gundo_preview_bottom = 1
-
-" ---------
-"  NeoComplete settings
-"
-"Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 2
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "<C-n>" : "\<TAB>"
-
-inoremap <expr><C-j> pumvisible() ? '<C-n>' : 'j'
-inoremap <expr><C-k> pumvisible() ? '<C-p>' : 'k'
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
-
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 
 
 " BufOnly.vim  -  Delete all the buffers except the current/named buffer.
@@ -481,3 +413,46 @@ function! BufOnly(buffer, bang)
 	endif
 
 endfunction
+
+" Auto close the preview window that YCM opens
+autocmd CompleteDone * pclose
+
+
+" Expand region setting
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+" Custom syntastic settings:
+"
+let g:syntastic_javascript_checkers = ['jshint']
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+function s:find_jshintrc(dir)
+  let l:found = globpath(a:dir, '.jshintrc')
+  if filereadable(l:found)
+    return l:found
+  endif
+
+  let l:parent = fnamemodify(a:dir, ':h')
+  if l:parent != a:dir
+    return s:find_jshintrc(l:parent)
+  endif
+
+  return "~/.jshintrc"
+endfunction
+
+function UpdateJsHintConf()
+  let l:dir = expand('%:p:h')
+  let l:jshintrc = s:find_jshintrc(l:dir)
+  let g:syntastic_javascript_jshint_args = l:jshintrc
+endfunction
+
+au BufEnter * call UpdateJsHintConf()
