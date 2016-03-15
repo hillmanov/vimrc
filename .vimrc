@@ -11,7 +11,10 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
-Plug 'kien/ctrlp.vim'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
 Plug 'junegunn/vim-easy-align'
 Plug 'pangloss/vim-javascript'
 Plug 'othree/yajs.vim'
@@ -22,8 +25,6 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'airblade/vim-gitgutter'
 Plug 'morhetz/gruvbox'
 Plug 'scrooloose/nerdtree'
-Plug 'digitaltoad/vim-jade'
-Plug 'fatih/vim-go'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'tpope/vim-commentary'
 Plug 'groenewege/vim-less'
@@ -34,15 +35,18 @@ Plug 'dbakker/vim-projectroot'
 Plug 'tpope/vim-abolish'
 Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
 Plug 'sjl/vitality.vim' " Adds a nicer cursor when in insert mode
-Plug 'junegunn/vim-peekaboo'
 Plug 'tpope/vim-repeat'
 Plug 'wellle/targets.vim'
-Plug 'Valloric/YouCompleteMe'
+Plug 'Shougo/deoplete.nvim'
 Plug 'terryma/vim-expand-region'
-Plug 'scrooloose/syntastic'
+Plug 'benekastah/neomake'
 Plug 'mxw/vim-jsx'
 Plug 'othree/html5.vim'
-" Plug 'terryma/vim-multiple-cursors'
+Plug 'SirVer/ultisnips'
+Plug 'ervandew/supertab'
+Plug 'tpope/vim-speeddating'
+Plug 'AndrewRadev/sideways.vim'
+Plug 'ap/vim-css-color'
 
 call plug#end()            " required
 
@@ -152,6 +156,8 @@ scriptencoding utf-8
 set clipboard=unnamed
 
 set undofile                                            " save central undo files
+" set shortmess=a                                         " Turn off the "Press ENTER or command to continue message"
+" set cmdheight=2
 set undodir=~/.vim/tmp/undo/
 set backup                                              " enable backups
 set backupdir=~/.vim/tmp/backup/
@@ -201,7 +207,7 @@ vnoremap <Down> :m '>+1<CR>gv=gv
 vnoremap <Up> :m '<-2<CR>gv=gv
 
 " Formated pasted text automatically
-nnoremap p ]p
+" nnoremap p p=`]
 
 " Select pasted text
 nnoremap gp `[v`]
@@ -253,18 +259,61 @@ let NERDTreeShowHidden=1
 let NERDTreeKeepTreeInNewTab=1
 let g:nerdtree_tabs_open_on_gui_startup=0
 
-" CtrlP customizations
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_custom_ignore = { 'dir':  '\.git$' }
-let s:ctrlp_fallback = 'ag %s --nocolor -f'
-let g:ctrlp_user_command = {
-      \ 'types': {
-      \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
-      \ },
-      \ 'fallback': s:ctrlp_fallback
-      \ }
-let g:ctrlp_match_window_bottom   = 0
-let g:ctrlp_match_window_reversed = 0
+" " CtrlP customizations
+" let g:ctrlp_working_path_mode = 'ra'
+" let g:ctrlp_custom_ignore = { 'dir':  '\.git$' }
+" let s:ctrlp_fallback = 'ag %s --nocolor -f'
+" let g:ctrlp_user_command = {
+"       \ 'types': {
+"       \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
+"       \ },
+"       \ 'fallback': s:ctrlp_fallback
+"       \ }
+" let g:ctrlp_match_window_bottom   = 0
+" let g:ctrlp_match_window_reversed = 0
+
+" FZF customizations" 
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+" Default fzf layout
+" - down / up / left / right
+" - window (nvim only)
+let g:fzf_layout = { 'down': '~20%' }
+
+" For Commits and BCommits to customize the options used by 'git log':
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+
+" Advanced customization using autoload functions
+autocmd VimEnter * command! Colors
+  \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'})
+
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+" Insert mode completion
+nnoremap <leader>f :Files<CR>
+
+" Advanced customization using autoload functions
+inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
+
+function! s:fzf_statusline()
+  " Override statusline as you like
+  highlight fzf1 ctermfg=161 ctermbg=251
+  highlight fzf2 ctermfg=23 ctermbg=251
+  highlight fzf3 ctermfg=237 ctermbg=251
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
+
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
+
+
+
 
 "Fugitive customizations
 nnoremap <silent> <leader>gs :Gstatus<CR>
@@ -310,6 +359,11 @@ vmap <C-v> <Plug>(expand_region_shrink)
 
 " Javascript library syntax highlighting settings
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
+
+" " make YCM compatible with UltiSnips (using supertab)
+" let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
+" let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
+" let g:SuperTabDefaultCompletionType = '<C-j>'
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<tab>"
@@ -415,8 +469,7 @@ function! BufOnly(buffer, bang)
 endfunction
 
 " Auto close the preview window that YCM opens
-autocmd CompleteDone * pclose
-
+" autocmd CompleteDone * pclose
 
 " Expand region setting
 vmap v <Plug>(expand_region_expand)
@@ -424,35 +477,84 @@ vmap <C-v> <Plug>(expand_region_shrink)
 
 " Custom syntastic settings:
 "
-let g:syntastic_javascript_checkers = ['jshint']
+" let g:syntastic_javascript_checkers = ['jshint']
+" let g:syntastic_html_checkers=['']
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
 
-function s:find_jshintrc(dir)
-  let l:found = globpath(a:dir, '.jshintrc')
-  if filereadable(l:found)
-    return l:found
-  endif
+" function! s:find_jshintrc(dir)
+"   let l:found = globpath(a:dir, '.jshintrc')
+"   if filereadable(l:found)
+"     return l:found
+"   endif
 
-  let l:parent = fnamemodify(a:dir, ':h')
-  if l:parent != a:dir
-    return s:find_jshintrc(l:parent)
-  endif
+"   let l:parent = fnamemodify(a:dir, ':h')
+"   if l:parent != a:dir
+"     return s:find_jshintrc(l:parent)
+"   endif
 
-  return "~/.jshintrc"
+"   return "~/.jshintrc"
+" endfunction
+
+" function! UpdateJsHintConf()
+"   let l:dir = expand('%:p:h')
+"   let l:jshintrc = s:find_jshintrc(l:dir)
+"   let g:syntastic_javascript_jshint_args = l:jshintrc
+" endfunction
+
+" au BufEnter * call UpdateJsHintConf()
+
+" Multiple cursors settings
+"
+let g:multi_cursor_use_default_mapping=0
+let g:multi_cursor_next_key='<C-s>'
+let g:multi_cursor_quit_key='<Esc>'
+
+
+" JSCS auto run on js files save
+function! JscsFix()
+    "Save current cursor position"
+    let l:winview = winsaveview()
+    "Pipe the current buffer (%) through the jscs -x command"
+    % ! jscs -x
+    "Restore cursor position - this is needed as piping the file"
+    "through jscs jumps the cursor to the top"
+    call winrestview(l:winview)
 endfunction
+command! JscsFix :call JscsFix()
 
-function UpdateJsHintConf()
-  let l:dir = expand('%:p:h')
-  let l:jshintrc = s:find_jshintrc(l:dir)
-  let g:syntastic_javascript_jshint_args = l:jshintrc
-endfunction
+"Run the JscsFix command just before the buffer is written for *.js files"
+" autocmd BufWritePre *.js JscsFix
 
-au BufEnter * call UpdateJsHintConf()
+" Use deoplete
+let g:deoplete#enable_at_startup = 1
+
+" NeoMake - jshint
+let g:neomake_javascript_jshint_maker = {
+    \ 'args': ['--verbose'],
+    \ 'errorformat': '%A%f: line %l\, col %v\, %m \(%t%*\d\)',
+    \ }
+
+let g:neomake_javascript_jscs_maker = {
+    \ 'args': ['--no-colors', '--reporter', 'inline'],
+    \ 'errorformat': '%f: line %l\, col %c\, %m',
+    \ }
+let g:neomake_javascript_enabled_makers = ['jshint', 'jscs']
+autocmd! BufWritePost * Neomake
+let g:neomake_open_list = 2
+
+" Sideways config
+nnoremap <leader><leader>h :SidewaysLeft<cr>
+nnoremap <leader><leader>l :SidewaysRight<cr>
+omap aa <Plug>SidewaysArgumentTextobjA
+xmap aa <Plug>SidewaysArgumentTextobjA
+omap ia <Plug>SidewaysArgumentTextobjI
+xmap ia <Plug>SidewaysArgumentTextobjI
+
