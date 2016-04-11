@@ -75,9 +75,9 @@ set relativenumber              " Relative line numbers
 
 set scrolljump=1                " Lines to scroll when cursor leaves screen
 set scrolloff=8                 " Minimum lines to keep above and below cursor
-" set list                        " Show white space characters
-" set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 set nowrap                      " Don't wrap long lines Don't
+set nocursorcolumn
+set nocursorline
 
 " -----------------------------------------------------
 " Syntax, highlighting and spelling
@@ -191,6 +191,7 @@ vnoremap = =gv
 noremap <tab> :bn<CR>
 noremap <S-tab> :bp<CR>
 noremap <Leader>x :bd<CR>
+noremap <Leader>c <C-w>q
 noremap <Leader>X :BufOnly<CR>
 
 " Replace current word with what is in the clipboard
@@ -291,13 +292,20 @@ let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %
 autocmd VimEnter * command! Colors
   \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'})
 
-" Mapping selecting mappings
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
+" Automatically change the working directory to the current file's directory
+set autochdir
+
+" Normal mode completion
+fun! s:fzf_root()
+	let path = finddir(".git", expand("%:p:h").";")
+	return fnamemodify(substitute(path, ".git", "", ""), ":p:h")
+endfun
+
+nnoremap <silent> <Leader>f :exe 'Files ' . <SID>fzf_root()<CR>
 
 " Insert mode completion
-nnoremap <leader>f :Files<CR>
+imap <C-x><C-f> <plug>(fzf-complete-file-ag)
+imap <C-x><C-l> <plug>(fzf-complete-line)
 
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
@@ -334,6 +342,12 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. <Leader>aip)
 nmap <Leader>a <Plug>(EasyAlign)
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+nmap <Leader><Leader>= gaip=
 
 " EasyMotion
 nmap <Leader><Leader>s <Plug>(easymotion-s)
