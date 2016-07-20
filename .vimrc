@@ -11,6 +11,10 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-speeddating'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -18,6 +22,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'pangloss/vim-javascript'
 Plug 'othree/yajs.vim'
+Plug 'digitaltoad/vim-pug'
 Plug 'Raimondi/delimitMate'
 Plug 'marijnh/tern_for_vim'
 Plug 'bling/vim-airline'
@@ -26,16 +31,12 @@ Plug 'airblade/vim-gitgutter'
 Plug 'morhetz/gruvbox'
 Plug 'scrooloose/nerdtree'
 Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'tpope/vim-commentary'
 Plug 'groenewege/vim-less'
 Plug 'gregsexton/MatchTag'
 Plug 'tmhedberg/matchit'
 Plug 'rking/ag.vim'
 Plug 'dbakker/vim-projectroot'
-Plug 'tpope/vim-abolish'
 Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
-Plug 'sjl/vitality.vim' " Adds a nicer cursor when in insert mode
-Plug 'tpope/vim-repeat'
 Plug 'wellle/targets.vim'
 Plug 'Shougo/deoplete.nvim'
 Plug 'terryma/vim-expand-region'
@@ -44,7 +45,6 @@ Plug 'mxw/vim-jsx'
 Plug 'othree/html5.vim'
 Plug 'SirVer/ultisnips'
 Plug 'ervandew/supertab'
-Plug 'tpope/vim-speeddating'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'ap/vim-css-color'
 
@@ -67,7 +67,7 @@ set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=Meslo\ LG\ M\ for\ Powerline:h14
+set guifont=Fantasque\ Sans\ Mono:h14
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -77,7 +77,7 @@ set scrolljump=1                " Lines to scroll when cursor leaves screen
 set scrolloff=8                 " Minimum lines to keep above and below cursor
 set nowrap                      " Don't wrap long lines Don't
 set nocursorcolumn
-set nocursorline
+set cursorline
 
 " -----------------------------------------------------
 " Syntax, highlighting and spelling
@@ -105,7 +105,7 @@ set mousehide "Hide mouse while characters are being typed
 " -----------------------------------------------------
 " Selecting text
 " -----------------------------------------------------
-
+set clipboard=unnamed
 " -----------------------------------------------------
 " Editing text
 " -----------------------------------------------------
@@ -153,7 +153,6 @@ set wildmode=list:longest,full  " Command <Tab> completion, list matches, then l
 " Various
 " -----------------------------------------------------
 scriptencoding utf-8
-set clipboard=unnamed
 
 set undofile                                            " save central undo files
 " set shortmess=a                                         " Turn off the "Press ENTER or command to continue message"
@@ -275,6 +274,7 @@ let g:nerdtree_tabs_open_on_gui_startup=0
 
 " FZF customizations" 
 " This is the default extra key bindings
+let $FZF_DEFAULT_COMMAND='ag -g ""'
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
@@ -375,9 +375,9 @@ vmap <C-v> <Plug>(expand_region_shrink)
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
 
 " " make YCM compatible with UltiSnips (using supertab)
-" let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
-" let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
-" let g:SuperTabDefaultCompletionType = '<C-j>'
+let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-j>'
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger = "<tab>"
@@ -482,85 +482,28 @@ function! BufOnly(buffer, bang)
 
 endfunction
 
-" Auto close the preview window that YCM opens
-" autocmd CompleteDone * pclose
-
 " Expand region setting
 vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
 
-" Custom syntastic settings:
-"
-" let g:syntastic_javascript_checkers = ['jshint']
-" let g:syntastic_html_checkers=['']
-
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-
-" function! s:find_jshintrc(dir)
-"   let l:found = globpath(a:dir, '.jshintrc')
-"   if filereadable(l:found)
-"     return l:found
-"   endif
-
-"   let l:parent = fnamemodify(a:dir, ':h')
-"   if l:parent != a:dir
-"     return s:find_jshintrc(l:parent)
-"   endif
-
-"   return "~/.jshintrc"
-" endfunction
-
-" function! UpdateJsHintConf()
-"   let l:dir = expand('%:p:h')
-"   let l:jshintrc = s:find_jshintrc(l:dir)
-"   let g:syntastic_javascript_jshint_args = l:jshintrc
-" endfunction
-
-" au BufEnter * call UpdateJsHintConf()
-
-" Multiple cursors settings
-"
-let g:multi_cursor_use_default_mapping=0
-let g:multi_cursor_next_key='<C-s>'
-let g:multi_cursor_quit_key='<Esc>'
-
-
-" JSCS auto run on js files save
-function! JscsFix()
-    "Save current cursor position"
+function! EslintFix()
     let l:winview = winsaveview()
-    "Pipe the current buffer (%) through the jscs -x command"
-    % ! jscs -x
-    "Restore cursor position - this is needed as piping the file"
-    "through jscs jumps the cursor to the top"
+    silent !eslint --fix %
     call winrestview(l:winview)
 endfunction
-command! JscsFix :call JscsFix()
+command! EslintFix :call EslintFix()
+
+function! Lebab()
+    let l:winview = winsaveview()
+    silent !lebab % -o % --enable arrow,let,arg-spread,obj-method,obj-shorthand,template
+    call winrestview(l:winview)
+endfunction
+command! Lebab :call Lebab()
 
 "Run the JscsFix command just before the buffer is written for *.js files"
-" autocmd BufWritePre *.js JscsFix
+" autocmd BufWritePre *.js EslintFix
 
-" Use deoplete
-let g:deoplete#enable_at_startup = 1
-
-" NeoMake - jshint
-let g:neomake_javascript_jshint_maker = {
-    \ 'args': ['--verbose'],
-    \ 'errorformat': '%A%f: line %l\, col %v\, %m \(%t%*\d\)',
-    \ }
-
-let g:neomake_javascript_jscs_maker = {
-    \ 'args': ['--no-colors', '--reporter', 'inline'],
-    \ 'errorformat': '%f: line %l\, col %c\, %m',
-    \ }
-let g:neomake_javascript_enabled_makers = ['jshint', 'jscs']
+let g:neomake_javascript_enabled_makers = ['eslint']
 autocmd! BufWritePost * Neomake
 let g:neomake_open_list = 2
 
@@ -572,3 +515,10 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
+" Use deoplete
+let g:deoplete#enable_at_startup = 1
+
+" use tab to forward cycle
+inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
+" use tab to backward cycle
+inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<c-d>"
