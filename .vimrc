@@ -1,10 +1,4 @@
 " -----------------------------------------------------
-" Important
-" -----------------------------------------------------
-set nocompatible              " be iMproved, required
-filetype off                  " required for Vundle
-
-" -----------------------------------------------------
 " Plugins
 " -----------------------------------------------------
 call plug#begin('~/.vim/plugged')
@@ -24,7 +18,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'othree/yajs.vim'
 Plug 'digitaltoad/vim-pug'
 Plug 'Raimondi/delimitMate'
-Plug 'marijnh/tern_for_vim'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'bling/vim-airline'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'airblade/vim-gitgutter'
@@ -47,8 +41,10 @@ Plug 'SirVer/ultisnips'
 Plug 'ervandew/supertab'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'ap/vim-css-color'
+Plug 'jiangmiao/auto-pairs'
 
 call plug#end()            " required
+
 
 " -----------------------------------------------------
 " Moving around, searching and patterns
@@ -67,7 +63,7 @@ set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=Fantasque\ Sans\ Mono:h14
+set guifont=FantasqueSansMono\ Nerd\ Font:h14
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -79,6 +75,11 @@ set nowrap                      " Don't wrap long lines Don't
 set nocursorcolumn
 set cursorline
 
+" Automatically change the current directory
+" Had to do it on insert enter. autochdir didn't work properly with path
+" completion for some reason
+autocmd InsertEnter * silent! lcd %:p:h
+
 " -----------------------------------------------------
 " Syntax, highlighting and spelling
 " -----------------------------------------------------
@@ -87,6 +88,9 @@ syntax sync minlines=256
 colorscheme gruvbox
 set background=dark
 set nospell                     " Spell checking on
+
+"Checking to see if this will help remove some "nanny" messages
+set autowrite
 
 " -----------------------------------------------------
 " Multiple windows
@@ -163,6 +167,7 @@ set backupdir=~/.vim/tmp/backup/
 set virtualedit=onemore                                 " Allow for cursor beyond last character
 set nojoinspaces                                        " Don't add more spaces with joing lines with <S-J>
 set shortmess=I                                         " Don't show the intro message on startup
+set showcmd
 " -----------------------------------------------------
 " Key (re)mappings 
 " -----------------------------------------------------
@@ -196,15 +201,11 @@ noremap <Leader>X :BufOnly<CR>
 " Replace current word with what is in the clipboard
 nnoremap <Leader>s "_diwP
 
-" Move lines around with Alt j and k in any mode
-nnoremap <Down> :m .+1<CR>==
-nnoremap <Up> :m .-2<CR>==
-
-inoremap <Down> <Esc>:m .+1<CR>==gi
-inoremap <Up> <Esc>:m .-2<CR>==gi
-
-vnoremap <Down> :m '>+1<CR>gv=gv
-vnoremap <Up> :m '<-2<CR>gv=gv
+" Move lines around with Ctrl j and k in any mode
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
 
 " Formated pasted text automatically
 " nnoremap p p=`]
@@ -223,6 +224,7 @@ nnoremap <Leader><Leader>n :!node %<cr>
 " Search and replace in the file
 nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 vnoremap <Leader>h "hy:%s/<C-r>h//gc<left><left><left>
+nmap <expr> M ':%s/' . @/ . '//g<left><left>'
 
 " Search and replace in the files in the quickfix list
 nnoremap <Leader>H :Qargs \| argdo %s/\<<C-r><C-w>\>//gc \| update<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
@@ -239,15 +241,15 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 let g:indent_guides_enable_on_vim_startup = 0
 
 " Quick fix file navigation
-nmap <silent> <RIGHT> :cnext<CR>
-nmap <silent> <LEFT> :cprev<CR>
+nmap <C-l> <RIGHT> :cnext<CR>
+nmap <C-h> <LEFT> :cprev<CR>
 
 tnoremap jk <c-\><c-n>
 " -----------------------------------------------------
 " PLugin settings
 " -----------------------------------------------------
 " NERFTree customizations
-map <C-n> :NERDTreeToggle<CR>
+map <C-n> :exe 'NERDTreeToggle ' . <SID>fzf_root()<CR>
 nmap <leader>nt :NERDTreeFind<CR>
 
 let NERDTreeShowBookmarks=1
@@ -258,19 +260,6 @@ let NERDTreeMouseMode=2
 let NERDTreeShowHidden=1
 let NERDTreeKeepTreeInNewTab=1
 let g:nerdtree_tabs_open_on_gui_startup=0
-
-" " CtrlP customizations
-" let g:ctrlp_working_path_mode = 'ra'
-" let g:ctrlp_custom_ignore = { 'dir':  '\.git$' }
-" let s:ctrlp_fallback = 'ag %s --nocolor -f'
-" let g:ctrlp_user_command = {
-"       \ 'types': {
-"       \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
-"       \ },
-"       \ 'fallback': s:ctrlp_fallback
-"       \ }
-" let g:ctrlp_match_window_bottom   = 0
-" let g:ctrlp_match_window_reversed = 0
 
 " FZF customizations" 
 " This is the default extra key bindings
@@ -289,11 +278,20 @@ let g:fzf_layout = { 'down': '~20%' }
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
 
 " Advanced customization using autoload functions
-autocmd VimEnter * command! Colors
-  \ call fzf#vim#colors({'left': '15%', 'options': '--reverse --margin 30%,0'})
-
-" Automatically change the working directory to the current file's directory
-set autochdir
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 " Normal mode completion
 fun! s:fzf_root()
@@ -320,34 +318,8 @@ endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
-
-
-
-"Fugitive customizations
-nnoremap <silent> <leader>gs :Gstatus<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gc :Gcommit<CR>
-nnoremap <silent> <leader>gb :Gblame<CR>
-nnoremap <silent> <leader>gl :Glog<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
-nnoremap <silent> <leader>gr :Gread<CR>
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>ge :Gedit<CR>
-" Mnemonic _i_nteractive
-nnoremap <silent> <leader>gi :Git add -p %<CR>
-nnoremap <silent> <leader>gg :SignifyToggle<CR>
-
 " Start ieteractive EasyAlign in visual mode (e.g. vip<Enter>)
 vmap <Enter> <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. <Leader>aip)
-nmap <Leader>a <Plug>(EasyAlign)
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
-nmap <Leader><Leader>= gaip=
 
 " EasyMotion
 nmap <Leader><Leader>s <Plug>(easymotion-s)
@@ -374,9 +346,6 @@ vmap <C-v> <Plug>(expand_region_shrink)
 " Javascript library syntax highlighting settings
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
 
-" " make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-j>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-j>'
 
 " better key bindings for UltiSnipsExpandTrigger
@@ -384,8 +353,6 @@ let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
-" Use goimports
-let g:go_fmt_command = "goimports"
 " -----------------------------------------------------
 " Helper functions
 " -----------------------------------------------------
@@ -416,19 +383,7 @@ function! QuickfixFilenames()
 endfunction
 
 
-" BufOnly.vim  -  Delete all the buffers except the current/named buffer.
-"
-" Copyright November 2003 by Christian J. Robinson <infynity@onewest.net>
-"
-" Distributed under the terms of the Vim license.  See ":help license".
-"
-" Usage:
-"
-" :Bonly / :BOnly / :Bufonly / :BufOnly [buffer] 
-"
-" Without any arguments the current buffer is kept.  With an argument the
-" buffer name/number supplied is kept.
-
+" BufOnly.vim  Delete all the buffers except the current/named buffer.
 command! -nargs=? -complete=buffer -bang Bonly :call BufOnly('<args>', '<bang>')
 command! -nargs=? -complete=buffer -bang BOnly :call BufOnly('<args>', '<bang>')
 command! -nargs=? -complete=buffer -bang Bufonly :call BufOnly('<args>', '<bang>')
@@ -482,10 +437,6 @@ function! BufOnly(buffer, bang)
 
 endfunction
 
-" Expand region setting
-vmap v <Plug>(expand_region_expand)
-vmap <C-v> <Plug>(expand_region_shrink)
-
 function! EslintFix()
     let l:winview = winsaveview()
     silent !eslint --fix %
@@ -495,13 +446,10 @@ command! EslintFix :call EslintFix()
 
 function! Lebab()
     let l:winview = winsaveview()
-    silent !lebab % -o % --enable arrow,let,arg-spread,obj-method,obj-shorthand,template
+    silent !lebab % -o % --transform arrow,let,arg-spread,obj-method,obj-shorthand,template
     call winrestview(l:winview)
 endfunction
 command! Lebab :call Lebab()
-
-"Run the JscsFix command just before the buffer is written for *.js files"
-" autocmd BufWritePre *.js EslintFix
 
 let g:neomake_javascript_enabled_makers = ['eslint']
 autocmd! BufWritePost * Neomake
@@ -522,3 +470,19 @@ let g:deoplete#enable_at_startup = 1
 inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
 " use tab to backward cycle
 inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<c-d>"
+
+let g:jsx_ext_required = 0
+
+
+
+" tern and JavaScript
+
+autocmd FileType javascript setlocal omnifunc=tern#Complete
+autocmd FileType javascript nnoremap <silent> <buffer> gb :TernDef<CR>
+let g:tern_map_prefix = '<leader>'
+
+nnoremap <leader><leader>d :TernDef<CR>
+nnoremap <leader><leader>r :TernRefs<CR>
+nnoremap <leader><leader>R :TernRename<CR>
+
+
