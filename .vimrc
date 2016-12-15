@@ -45,7 +45,6 @@ Plug 'jiangmiao/auto-pairs'
 
 call plug#end()            " required
 
-
 " -----------------------------------------------------
 " Moving around, searching and patterns
 " ------------------------------------------------------
@@ -53,11 +52,9 @@ set incsearch                   " Find as you type search
 set hlsearch                    " Highlight search terms
 set ignorecase                  " Case insensitive search
 set smartcase                   " Case sensitive when uc present
-
 set iskeyword-=.                " '.' is an end of word designator
 set iskeyword-=#                " '#' is an end of word designator
 set iskeyword-=-                " '-' is an end of word designator
-
 set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
 
 " -----------------------------------------------------
@@ -68,7 +65,6 @@ set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
 set relativenumber              " Relative line numbers
-
 set scrolljump=1                " Lines to scroll when cursor leaves screen
 set scrolloff=8                 " Minimum lines to keep above and below cursor
 set nowrap                      " Don't wrap long lines Don't
@@ -87,10 +83,7 @@ syntax on
 syntax sync minlines=256
 colorscheme gruvbox
 set background=dark
-set nospell                     " Spell checking on
-
-"Checking to see if this will help remove some "nanny" messages
-set autowrite
+set autowrite "Checking to see if this will help remove some "nanny" messages
 
 " -----------------------------------------------------
 " Multiple windows
@@ -110,11 +103,13 @@ set mousehide "Hide mouse while characters are being typed
 " Selecting text
 " -----------------------------------------------------
 set clipboard=unnamed
+
 " -----------------------------------------------------
 " Editing text
 " -----------------------------------------------------
 set showmatch                   " Show matching brackets/parenthesis
-autocmd FileType java,go,javascript,python,html,less,css,json autocmd BufWritePre <buffer> call StripTrailingWhitespace() 
+autocmd FileType java,go,javascript,python,html,less,css,json autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+
 " -----------------------------------------------------
 " Tabs and indenting
 " -----------------------------------------------------
@@ -131,10 +126,6 @@ set smartindent " Intellegently dedent / indent new lines based on rules."
 " Folding
 " -----------------------------------------------------
 set foldenable                  " Auto fold code
-
-" -----------------------------------------------------
-" Diff mode
-" ----------------------------------------------------
 
 " -----------------------------------------------------
 " Mapping
@@ -159,8 +150,6 @@ set wildmode=list:longest,full  " Command <Tab> completion, list matches, then l
 scriptencoding utf-8
 
 set undofile                                            " save central undo files
-" set shortmess=a                                         " Turn off the "Press ENTER or command to continue message"
-" set cmdheight=2
 set undodir=~/.vim/tmp/undo/
 set backup                                              " enable backups
 set backupdir=~/.vim/tmp/backup/
@@ -168,11 +157,11 @@ set virtualedit=onemore                                 " Allow for cursor beyon
 set nojoinspaces                                        " Don't add more spaces with joing lines with <S-J>
 set shortmess=I                                         " Don't show the intro message on startup
 set showcmd
+"
 " -----------------------------------------------------
 " Key (re)mappings 
 " -----------------------------------------------------
 
-" Set space to <Leader>"
 let mapleader = ' '
 imap jk <Esc>
 vmap jk <Esc>
@@ -208,7 +197,7 @@ vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 
 " Formated pasted text automatically
-" nnoremap p p=`]
+nnoremap p p=`]
 
 " Select pasted text
 nnoremap gp `[v`]
@@ -235,7 +224,7 @@ nnoremap <Leader><Leader>/ :ProjectRootExe Ag<space><C-r><C-w><space>-Q<space>-w
 vnoremap <Leader><Leader>/ "hy:ProjectRootExe Ag<space><C-r>h<space>
 
 " vimrc edit and source
-nnoremap <Leader>ev :tabe $MYVIMRC<cr>
+nnoremap <Leader>ev :e $MYVIMRC<cr>
 nnoremap <Leader>sv :source $MYVIMRC<cr>
 
 let g:indent_guides_enable_on_vim_startup = 0
@@ -245,12 +234,13 @@ nmap <C-l> <RIGHT> :cnext<CR>
 nmap <C-h> <LEFT> :cprev<CR>
 
 tnoremap jk <c-\><c-n>
+
 " -----------------------------------------------------
 " PLugin settings
 " -----------------------------------------------------
 " NERFTree customizations
 map <C-n> :exe 'NERDTreeToggle ' . <SID>fzf_root()<CR>
-nmap <leader>nt :NERDTreeFind<CR>
+nmap <Leader>nt :NERDTreeFind<CR>
 
 let NERDTreeShowBookmarks=1
 let NERDTreeIgnore=['\~$', '\.swp$', '^\.git$','^node_modules$', '^\.DS_Store$']
@@ -382,7 +372,6 @@ function! QuickfixFilenames()
   return join(values(buffer_numbers))
 endfunction
 
-
 " BufOnly.vim  Delete all the buffers except the current/named buffer.
 command! -nargs=? -complete=buffer -bang Bonly :call BufOnly('<args>', '<bang>')
 command! -nargs=? -complete=buffer -bang BOnly :call BufOnly('<args>', '<bang>')
@@ -456,8 +445,8 @@ autocmd! BufWritePost * Neomake
 let g:neomake_open_list = 2
 
 " Sideways config
-nnoremap <leader><leader>h :SidewaysLeft<cr>
-nnoremap <leader><leader>l :SidewaysRight<cr>
+nnoremap <Leader><Leader>h :SidewaysLeft<cr>
+nnoremap <Leader><Leader>l :SidewaysRight<cr>
 omap aa <Plug>SidewaysArgumentTextobjA
 xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
@@ -473,16 +462,11 @@ inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<c-d>"
 
 let g:jsx_ext_required = 0
 
-
-
 " tern and JavaScript
-
 autocmd FileType javascript setlocal omnifunc=tern#Complete
 autocmd FileType javascript nnoremap <silent> <buffer> gb :TernDef<CR>
-let g:tern_map_prefix = '<leader>'
+let g:tern_map_prefix = '<Leader>'
 
-nnoremap <leader><leader>d :TernDef<CR>
-nnoremap <leader><leader>r :TernRefs<CR>
-nnoremap <leader><leader>R :TernRename<CR>
-
-
+nnoremap <Leader><Leader>d :TernDef<CR>
+nnoremap <Leader><Leader>r :TernRefs<CR>
+nnoremap <Leader><Leader>R :TernRename<CR>
