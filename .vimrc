@@ -1,4 +1,4 @@
-" -----------------------------------------------------
+"-----------------------------------------------------
 " Plugins
 " -----------------------------------------------------
 call plug#begin('~/.vim/plugged')
@@ -12,6 +12,7 @@ Plug 'tpope/vim-speeddating'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdtree'
 
 Plug 'junegunn/vim-easy-align'
 Plug 'pangloss/vim-javascript'
@@ -23,7 +24,6 @@ Plug 'bling/vim-airline'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'airblade/vim-gitgutter'
 Plug 'morhetz/gruvbox'
-Plug 'scrooloose/nerdtree'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'groenewege/vim-less'
 Plug 'gregsexton/MatchTag'
@@ -70,6 +70,7 @@ set scrolloff=8                 " Minimum lines to keep above and below cursor
 set nowrap                      " Don't wrap long lines Don't
 set nocursorcolumn
 set cursorline
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1 " Pipe in insert mode, block in others
 
 " Automatically change the current directory
 " Had to do it on insert enter. autochdir didn't work properly with path
@@ -165,6 +166,8 @@ set showcmd
 let mapleader = ' '
 imap jk <Esc>
 vmap jk <Esc>
+inoremap ;; <C-O>A;<CR>
+noremap ;; A;
 
 noremap j gj
 noremap k gk
@@ -176,6 +179,7 @@ noremap Y y$
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
+nnoremap <silent> <c-l> :<C-u>nohlsearch<cr><c-l>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -188,13 +192,16 @@ noremap <Leader>c <C-w>q
 noremap <Leader>X :BufOnly<CR>
 
 " Replace current word with what is in the clipboard
-nnoremap <Leader>s "_diwP
+nnoremap <Leader>r "_diwP
+nnoremap <expr> <Leader>rs ':%s/' . @/ . '//g<LEFT><LEFT>'
 
 " Move lines around with Ctrl j and k in any mode
 nnoremap <C-j> :m .+1<CR>==
 nnoremap <C-k> :m .-2<CR>==
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
+inoremap <C-j> <Esc>:m+<CR>==gi
+inoremap <C-k> <Esc>:m-2<CR>==gi
 
 " Formated pasted text automatically
 nnoremap p p=`]
@@ -230,8 +237,8 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 let g:indent_guides_enable_on_vim_startup = 0
 
 " Quick fix file navigation
-nmap <C-l> <RIGHT> :cnext<CR>
-nmap <C-h> <LEFT> :cprev<CR>
+nmap <silent> <RIGHT> :cnext<CR>
+nmap <silent> <LEFT> :cprev<CR>
 
 tnoremap jk <c-\><c-n>
 
@@ -334,7 +341,7 @@ vmap v <Plug>(expand_region_expand)
 vmap <C-v> <Plug>(expand_region_shrink)
 
 " Javascript library syntax highlighting settings
-let g:used_javascript_libs = 'underscore,jquery,angularjs,chai'
+let g:used_javascript_libs = 'underscore,jquery,angularjs,chai,react'
 
 let g:SuperTabDefaultCompletionType = '<C-j>'
 
@@ -464,9 +471,8 @@ let g:jsx_ext_required = 0
 
 " tern and JavaScript
 autocmd FileType javascript setlocal omnifunc=tern#Complete
-autocmd FileType javascript nnoremap <silent> <buffer> gb :TernDef<CR>
 let g:tern_map_prefix = '<Leader>'
 
 nnoremap <Leader><Leader>d :TernDef<CR>
-nnoremap <Leader><Leader>r :TernRefs<CR>
-nnoremap <Leader><Leader>R :TernRename<CR>
+nnoremap <Leader><Leader>r :TernRename<CR>
+nnoremap <Leader><Leader>R :TernRefs<CR>
