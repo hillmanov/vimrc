@@ -166,8 +166,7 @@ set showcmd
 let mapleader = ' '
 imap jk <Esc>
 vmap jk <Esc>
-inoremap ;; <C-O>A;<CR>
-noremap ;; A;
+imap ;; <C-O>A;<CR>
 
 noremap j gj
 noremap k gk
