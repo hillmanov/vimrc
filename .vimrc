@@ -2,6 +2,7 @@
 " Plugins
 " -----------------------------------------------------
 call plug#begin('~/.vim/plugged')
+" Plug 'ervandew/supertab'
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -15,12 +16,12 @@ Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 
 Plug 'junegunn/vim-easy-align'
-Plug 'pangloss/vim-javascript'
-Plug 'othree/yajs.vim'
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'digitaltoad/vim-pug'
 Plug 'Raimondi/delimitMate'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-Plug 'bling/vim-airline'
+Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'vim-airline/vim-airline'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'airblade/vim-gitgutter'
 Plug 'morhetz/gruvbox'
@@ -28,7 +29,7 @@ Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'groenewege/vim-less'
 Plug 'gregsexton/MatchTag'
 Plug 'tmhedberg/matchit'
-Plug 'rking/ag.vim'
+Plug 'jremmen/vim-ripgrep'
 Plug 'dbakker/vim-projectroot'
 Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
 Plug 'wellle/targets.vim'
@@ -38,10 +39,11 @@ Plug 'benekastah/neomake'
 Plug 'mxw/vim-jsx'
 Plug 'othree/html5.vim'
 Plug 'SirVer/ultisnips'
-Plug 'ervandew/supertab'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'ap/vim-css-color'
 Plug 'jiangmiao/auto-pairs'
+Plug 'flowtype/vim-flow'
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 
 call plug#end()            " required
 
@@ -56,11 +58,12 @@ set iskeyword-=.                " '.' is an end of word designator
 set iskeyword-=#                " '#' is an end of word designator
 set iskeyword-=-                " '-' is an end of word designator
 set whichwrap=b,s,h,l,<,>,[,]   " Backspace and cursor keys wrap too
+set inccommand=nosplit
 
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=FantasqueSansMono\ Nerd\ Font:h14
+set guifont=Fira\ Code:h14
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -71,8 +74,9 @@ set nowrap                      " Don't wrap long lines Don't
 set nocursorcolumn
 set cursorline
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1 " Pipe in insert mode, block in others
+set completeopt-=preview
 
-" Automatically change the current directory
+" Automatically chanme the current directory
 " Had to do it on insert enter. autochdir didn't work properly with path
 " completion for some reason
 autocmd InsertEnter * silent! lcd %:p:h
@@ -82,6 +86,7 @@ autocmd InsertEnter * silent! lcd %:p:h
 " -----------------------------------------------------
 syntax on
 syntax sync minlines=256
+autocmd BufEnter * :syn sync maxlines=500
 colorscheme gruvbox
 set background=dark
 set autowrite "Checking to see if this will help remove some "nanny" messages
@@ -109,7 +114,12 @@ set clipboard=unnamed
 " Editing text
 " -----------------------------------------------------
 set showmatch                   " Show matching brackets/parenthesis
-autocmd FileType java,go,javascript,python,html,less,css,json autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+autocmd FileType java,javascript,python,html,less,css,json autocmd BufWritePre <buffer> call StripTrailingWhitespace()
+
+" Don't indent promise chains (https://github.com/pangloss/vim-javascript/issues/467#issuecomment-247851078)
+let g:javascript_opfirst = 1
+
+set conceallevel=1
 
 " -----------------------------------------------------
 " Tabs and indenting
@@ -126,7 +136,9 @@ set smartindent " Intellegently dedent / indent new lines based on rules."
 " -----------------------------------------------------
 " Folding
 " -----------------------------------------------------
-set foldenable                  " Auto fold code
+set foldmethod=manual
+set foldnestmax=1
+set nofoldenable
 
 " -----------------------------------------------------
 " Mapping
@@ -166,7 +178,6 @@ set showcmd
 let mapleader = ' '
 imap jk <Esc>
 vmap jk <Esc>
-imap ;; <C-O>A;<CR>
 
 noremap j gj
 noremap k gk
@@ -189,21 +200,28 @@ noremap <S-tab> :bp<CR>
 noremap <Leader>x :bd<CR>
 noremap <Leader>c <C-w>q
 noremap <Leader>X :BufOnly<CR>
+noremap <Leader>p $p
 
 " Replace current word with what is in the clipboard
 nnoremap <Leader>r "_diwP
 nnoremap <expr> <Leader>rs ':%s/' . @/ . '//g<LEFT><LEFT>'
+" Repeat last replacement of a word
+nnoremap <leader>. :let @/=@"<cr>/<cr>cgn<c-r>.<esc> 
 
 " Move lines around with Ctrl j and k in any mode
-nnoremap <C-j> :m .+1<CR>==
-nnoremap <C-k> :m .-2<CR>==
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
-inoremap <C-j> <Esc>:m+<CR>==gi
-inoremap <C-k> <Esc>:m-2<CR>==gi
+nnoremap <C-j> :m .+1<CR>
+nnoremap <C-k> :m .-2<CR>
+vnoremap <C-j> :m '>+1<CR>gv
+vnoremap <C-k> :m '<-2<CR>gv
+inoremap <C-j> <Esc>:m+<CR>gi
+inoremap <C-k> <Esc>:m-2<CR>gi
+
+" Format json
+nnoremap <Leader><Leader>j :%!python -m json.tool<CR>
+vnoremap <Leader><Leader>j :'<,'>!python -m json.tool<CR>
 
 " Formated pasted text automatically
-nnoremap p p=`]
+" nnoremap p p=`]
 
 " Select pasted text
 nnoremap gp `[v`]
@@ -216,6 +234,10 @@ cmap w!! w !sudo tee > /dev/null %
 nnoremap <Leader>w :w<cr>
 nnoremap <Leader><Leader>n :!node %<cr>
 
+" gf work on node modules
+set suffixesadd+=.js
+set path+=$PWD/node_modules
+
 " Search and replace in the file
 nnoremap <Leader>h :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 vnoremap <Leader>h "hy:%s/<C-r>h//gc<left><left><left>
@@ -226,8 +248,8 @@ nnoremap <Leader>H :Qargs \| argdo %s/\<<C-r><C-w>\>//gc \| update<Left><Left><L
 vnoremap <Leader>H "hy:Qargs \| argdo %s/<C-r>h//gc \| update<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
 " Find project wide
-nnoremap <Leader><Leader>/ :ProjectRootExe Ag<space><C-r><C-w><space>-Q<space>-w
-vnoremap <Leader><Leader>/ "hy:ProjectRootExe Ag<space><C-r>h<space>
+nnoremap <Leader><Leader>/ :ProjectRootExe Rg<space><C-r><C-w>
+vnoremap <Leader><Leader>/ "hy:ProjectRootExe Rg<space><C-r>h<space>
 
 " vimrc edit and source
 nnoremap <Leader>ev :e $MYVIMRC<cr>
@@ -259,7 +281,7 @@ let g:nerdtree_tabs_open_on_gui_startup=0
 
 " FZF customizations" 
 " This is the default extra key bindings
-let $FZF_DEFAULT_COMMAND='ag -g ""'
+let $FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*" --glob "!node_modules/*"'
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
@@ -334,6 +356,8 @@ highlight GitGutterChangeDelete ctermfg=yellow guifg=darkyellow
 " Airline
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#hunks#enabled=0
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 " Expand region
 vmap v <Plug>(expand_region_expand)
@@ -342,10 +366,10 @@ vmap <C-v> <Plug>(expand_region_shrink)
 " Javascript library syntax highlighting settings
 let g:used_javascript_libs = 'underscore,jquery,angularjs,chai,react'
 
-let g:SuperTabDefaultCompletionType = '<C-j>'
+" let g:SuperTabDefaultCompletionType = '<C-j>'
 
 " better key bindings for UltiSnipsExpandTrigger
-let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsExpandTrigger = ";;"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
@@ -450,6 +474,11 @@ let g:neomake_javascript_enabled_makers = ['eslint']
 autocmd! BufWritePost * Neomake
 let g:neomake_open_list = 2
 
+augroup qf
+    autocmd!
+    autocmd FileType qf set nobuflisted
+augroup END
+
 " Sideways config
 nnoremap <Leader><Leader>h :SidewaysLeft<cr>
 nnoremap <Leader><Leader>l :SidewaysRight<cr>
@@ -458,20 +487,36 @@ xmap aa <Plug>SidewaysArgumentTextobjA
 omap ia <Plug>SidewaysArgumentTextobjI
 xmap ia <Plug>SidewaysArgumentTextobjI
 
-" Use deoplete
-let g:deoplete#enable_at_startup = 1
-
 " use tab to forward cycle
 inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
 " use tab to backward cycle
 inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<c-d>"
 
+" Enable jsx highlighting for .js files as well
 let g:jsx_ext_required = 0
 
 " tern and JavaScript
 autocmd FileType javascript setlocal omnifunc=tern#Complete
 let g:tern_map_prefix = '<Leader>'
 
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+let g:tern_request_timeout = 1
+let g:tern_show_signature_in_pum = '0'  " This do disable full signature type on autocomplete
 nnoremap <Leader><Leader>d :TernDef<CR>
 nnoremap <Leader><Leader>r :TernRename<CR>
-nnoremap <Leader><Leader>R :TernRefs<CR>
+nnoremap <Leader><Leader><Leader>r :TernRefs<CR>
+
+" Flow config
+let g:flow#autoclose=1
+let g:flow#timeout=4
+let g:javascript_plugin_flow=1 " For pangloss/vim-javascript
+
+" Go config 
+let g:go_fmt_command = "goimports" " Run goimports on save for go files. Also runs gofmt (which was replaced by goimports)
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
