@@ -17,7 +17,6 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'junegunn/vim-easy-align'
 Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'digitaltoad/vim-pug'
 Plug 'Raimondi/delimitMate'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
@@ -42,7 +41,7 @@ Plug 'SirVer/ultisnips'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'ap/vim-css-color'
 Plug 'jiangmiao/auto-pairs'
-Plug 'flowtype/vim-flow'
+" Plug 'flowtype/vim-flow'
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
 
@@ -288,9 +287,6 @@ let g:fzf_action = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 
-" Default fzf layout
-" - down / up / left / right
-" - window (nvim only)
 let g:fzf_layout = { 'down': '~20%' }
 
 " For Commits and BCommits to customize the options used by 'git log':
@@ -342,10 +338,6 @@ vmap <Enter> <Plug>(EasyAlign)
 
 " EasyMotion
 nmap <Leader><Leader>s <Plug>(easymotion-s)
-
-" change the default EasyMotion shading to something more readable with Solarized
-hi link EasyMotionTarget ErrorMsg
-hi link EasyMotionShade  Comment
 
 " Settings for gitgutter to look right with solarized theme
 highlight clear SignColumn
@@ -521,3 +513,6 @@ let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
+
+" Auto-Pairs
+let g:AutoPairsMultilineClose = 0
