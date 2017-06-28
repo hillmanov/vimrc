@@ -33,18 +33,19 @@ Plug 'dbakker/vim-projectroot'
 Plug 'kshenoy/vim-signature' " Adds label in gutter for marks 
 Plug 'wellle/targets.vim'
 Plug 'Shougo/deoplete.nvim'
-Plug 'terryma/vim-expand-region'
 Plug 'benekastah/neomake'
+Plug 'benjie/neomake-local-eslint.vim'
 Plug 'mxw/vim-jsx'
 Plug 'othree/html5.vim'
 Plug 'SirVer/ultisnips'
 Plug 'AndrewRadev/sideways.vim'
 Plug 'ap/vim-css-color'
 Plug 'jiangmiao/auto-pairs'
-" Plug 'flowtype/vim-flow'
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
+" Plug 'flowtype/vim-flow'
 call plug#end()            " required
 
 " -----------------------------------------------------
@@ -63,7 +64,8 @@ set inccommand=nosplit
 " -----------------------------------------------------
 " Displaying text
 " -----------------------------------------------------
-set guifont=Fira\ Code:h14
+set guifont=FuraCode\ Nerd\ Font:h14
+set encoding=utf8
 set backspace=indent,eol,start  " Backspace for dummies
 set linespace=0                 " No extra spaces between rows
 set nu                          " Line numbers on
@@ -332,6 +334,7 @@ function! s:fzf_statusline()
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
+au BufNewFile,BufRead *.ejs set filetype=html " Treat ejs files like html for syntax highlighting
 
 " Start ieteractive EasyAlign in visual mode (e.g. vip<Enter>)
 vmap <Enter> <Plug>(EasyAlign)
@@ -451,10 +454,12 @@ endfunction
 
 function! EslintFix()
     let l:winview = winsaveview()
-    silent !eslint --fix %
+    let EslintBin = GetNpmBin('eslint')
+    execute 'silent !' . EslintBin . ' --fix %'
     call winrestview(l:winview)
 endfunction
 command! EslintFix :call EslintFix()
+noremap <Leader><Leader>f :EslintFix<CR>
 
 function! Lebab()
     let l:winview = winsaveview()
@@ -516,3 +521,6 @@ let g:go_highlight_build_constraints = 1
 
 " Auto-Pairs
 let g:AutoPairsMultilineClose = 0
+
+" Helper function to prefer local installation of a node script over global
+"
